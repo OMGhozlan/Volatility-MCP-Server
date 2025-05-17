@@ -1,0 +1,11 @@
+mcp-server
+aiohttp
+python-dotenv
+typing-extensions
+rich
+fastmcp
+requests
+rich
+pyyaml
+capstone
+pycryptodome

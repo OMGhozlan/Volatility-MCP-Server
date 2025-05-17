@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  volatility-mcp:
+    build:
+      context: .
+      args:
+        - DOWNLOAD_SYMBOLS=true  # Set to false to skip symbols download during build
+    ports:
+      - "8888:8000"
+    volumes:
+      - ./memory_dumps:/memory_dumps
+    environment:
+      - MCP_PORT=8888
+      - MCP_HOST=0.0.0.0
+      # Optional: Override other environment variables if needed
+      # - VOLATILITY_DIR=/opt/volatility3
+      # - SYMBOLS_DIR=/opt/volatility3/symbols
+    restart: unless-stopped

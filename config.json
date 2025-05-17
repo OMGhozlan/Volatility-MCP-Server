@@ -1,0 +1,14 @@
+{
+    "volatility": {
+        "dir": "volatility3",
+        "python_path": "python",
+        "vol_script": "vol.py",
+        "plugins_dir": "volatility3/plugins",
+        "symbol_cache_dir": "volatility3/symbols"
+    },
+    "server": {
+        "host": "localhost",
+        "port": 8000,
+        "debug": false
+    }
+} 
