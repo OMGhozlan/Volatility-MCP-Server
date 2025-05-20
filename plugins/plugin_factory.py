@@ -1,9 +1,6 @@
 from typing import Dict, Type
 from .base_plugin import BasePlugin
-from .windows import *
-from .linux import *
-from .mac import *
-from .common import *
+from . import windows, linux, mac, common
 
 class PluginFactory:
     """Factory class for creating plugin instances"""
@@ -35,7 +32,7 @@ class PluginFactory:
         """Register all Windows plugins"""
         from .windows import __all__ as windows_plugins
         for plugin_name in windows_plugins:
-            plugin_class = globals()[plugin_name]
+            plugin_class = getattr(windows, plugin_name)
             cls.register_plugin(f"windows.{plugin_name}", plugin_class)
             
     @classmethod
@@ -43,7 +40,7 @@ class PluginFactory:
         """Register all Linux plugins"""
         from .linux import __all__ as linux_plugins
         for plugin_name in linux_plugins:
-            plugin_class = globals()[plugin_name]
+            plugin_class = getattr(linux, plugin_name)
             cls.register_plugin(f"linux.{plugin_name}", plugin_class)
             
     @classmethod
@@ -51,7 +48,7 @@ class PluginFactory:
         """Register all macOS plugins"""
         from .mac import __all__ as mac_plugins
         for plugin_name in mac_plugins:
-            plugin_class = globals()[plugin_name]
+            plugin_class = getattr(mac, plugin_name)
             cls.register_plugin(f"mac.{plugin_name}", plugin_class)
             
     @classmethod
@@ -59,5 +56,5 @@ class PluginFactory:
         """Register all common plugins"""
         from .common import __all__ as common_plugins
         for plugin_name in common_plugins:
-            plugin_class = globals()[plugin_name]
+            plugin_class = getattr(common, plugin_name)
             cls.register_plugin(plugin_name, plugin_class) 

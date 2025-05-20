@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict, Any
 from pathlib import Path
 
 class BasePlugin(ABC):
@@ -16,6 +16,6 @@ class BasePlugin(ABC):
         return memory_dump_path
         
     @abstractmethod
-    async def run(self, memory_dump_path: str) -> str:
-        """Run the plugin with the given memory dump"""
+    async def run(self, memory_dump_path: str, kw_args: Dict[str, Any] = None) -> str:
+        """Run the plugin with the given memory dump and optional keyword arguments."""
         pass 
