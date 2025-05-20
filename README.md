@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![Volatility 3](https://img.shields.io/badge/Volatility-3.x-success)](https://github.com/volatilityfoundation/volatility3)
-[![Docker Ready](https://img.shields.io/badge/Docker-Ready-green)](https://hub.docker.com/)
+[![Docker (Not) Ready](https://img.shields.io/badge/Docker-Ready-green)](https://hub.docker.com/)
 [![FastMCP](https://img.shields.io/badge/FastMCP-Server-red.svg)](https://github.com/Textualize/fastmcp)
 
 ---
@@ -70,7 +70,7 @@ Volatility-MCP-Server/
 ## 🖥️ Usage
 
 ### 🔧 Local Connection
-
+#### Using `stdio`
 Create a `.cursor/mcp.json` file with:
 
 ```json
@@ -79,6 +79,32 @@ Create a `.cursor/mcp.json` file with:
     "Volatility3": {
       "command": "fastmcp",
       "args": ["run", "path/to/volatility_mcp_server.py:mcp", "--transport", "stdio"]
+    }
+  }
+}
+```
+#### Using `sse`
+Run the server using
+```pwsh
+fastmcp run volatility_mcp_server.py:mcp --transport sse
+```
+For Claude desktop
+```json
+{
+    "mcpServers": {
+      "volatility3": {
+        "command": "npx",
+        "args": ["mcp-remote", "http://localhost:8000/sse"]
+      }
+    }
+  }
+```
+For Cursor
+```json
+{
+  "mcpServers": {
+    "Volatility3": {
+      "url": "http://localhost:8000/sse"
     }
   }
 }
@@ -92,6 +118,7 @@ Create a `.cursor/mcp.json` file with:
 - Network: `NetScan`
 - Registry: `RegistryHiveList`, `RegistryPrintKey`
 - System: `SvcScan`, `CmdLine`, `DllList`, `Handles`, `FileScan`
+- Disk: `ADS`, `MFTScan`, `ResidentData`
 
 #### Linux Plugins
 - Process: `PsList`, `PsTree`, `PsScan`, `PsAux`, `PsCallStack`
