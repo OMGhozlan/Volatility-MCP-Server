@@ -3,6 +3,7 @@ from .memory_plugins import Malfind, MemMap
 from .network_plugins import NetScan
 from .registry_plugins import RegistryHiveList, RegistryPrintKey
 from .system_plugins import SvcScan, CmdLine, DllList, Handles, FileScan, ImageInfo
+from .disk_plugins import ADSScan, MFTScan, ResidentData
 
 __all__ = [
     'PsList',
@@ -18,5 +19,8 @@ __all__ = [
     'DllList',
     'Handles',
     'FileScan',
-    'ImageInfo'
+    'ImageInfo',
+    'ADSScan',
+    'MFTScan',
+    'ResidentData',
 ] 
