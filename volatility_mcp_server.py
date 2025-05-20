@@ -9,6 +9,8 @@ from fastmcp import FastMCP
 from dotenv import load_dotenv
 import logging
 from pathlib import Path
+from pydantic import BaseModel, Field  
+  
 
 from rich_logger import RichLogger
 from plugins.plugin_factory import PluginFactory
@@ -18,6 +20,12 @@ logger = RichLogger.get_logger("volatility3_mcp")
 
 # Loading environment variables
 load_dotenv()
+
+class KeywordArgs(BaseModel):  
+    # Required fields  
+    operation: str  
+    # Optional dictionary that can contain any additional parameters  
+    extra_params: Dict[str, Any] = Field(default_factory=dict)  
 
 # Create an MCP server
 mcp = FastMCP("Volatility3Forensics")
@@ -163,20 +171,38 @@ async def list_available_plugins() -> str:
     return json.dumps(plugins, indent=2)
 
 @mcp.tool()
-async def run_plugin(memory_dump_path: str, plugin_name: str) -> str:
+async def run_plugin(memory_dump_path: str, plugin_name: str, kw_args: dict = None) -> str:
     """
-    Run a specific Volatility plugin
+    Run a specific Volatility plugin with optional keyword arguments.
 
     Args:
-        memory_dump_path: Full path to the memory dump file
-        plugin_name: Name of the plugin to run
+        memory_dump_path: Full path to the memory dump file.
+        plugin_name: Name of the plugin to run.
+        kw_args: Optional dictionary of keyword arguments to pass to the plugin.
 
     Returns:
-        Output from the specified plugin
+        Output from the specified plugin or an error message.
     """
     try:
         plugin = PluginFactory.get_plugin(plugin_name, volatility_runner)
-        return await plugin.run(memory_dump_path)
+
+        # Inspect the plugin's run method for parameters
+        import inspect
+        run_signature = inspect.signature(plugin.run)
+        run_params = run_signature.parameters
+
+        # Prepare arguments to pass to plugin.run
+        plugin_args = {}
+        if 'memory_dump_path' in run_params:
+            plugin_args['memory_dump_path'] = memory_dump_path
+
+        if kw_args:
+            for param_name, param in run_params.items():
+                # Check if the parameter is not memory_dump_path and is in kw_args
+                if param_name != 'memory_dump_path' and param_name in kw_args:
+                    plugin_args[param_name] = kw_args[param_name]
+
+        return await plugin.run(**plugin_args)
     except ValueError as e:
         return str(e)
     except Exception as e:
