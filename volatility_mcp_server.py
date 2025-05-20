@@ -150,7 +150,7 @@ volatility_runner = VolatilityRunner(
     volatility_python=VOLATILITY_PYTHON,
     volatility_dir=VOLATILITY_DIR,
     volatility_script=VOLATILITY_SCRIPT,
-    timeout=60  # Seconds
+    timeout=360  # Seconds
 )
 
 # Register all plugins
@@ -171,13 +171,14 @@ async def list_available_plugins() -> str:
     return json.dumps(plugins, indent=2)
 
 @mcp.tool()
-async def run_plugin(memory_dump_path: str, plugin_name: str, kw_args: dict = None) -> str:
+async def run_plugin(memory_dump_path: str, plugin_name: str, os_type: str = 'windows', kw_args: dict = None) -> str:
     """
     Run a specific Volatility plugin with optional keyword arguments.
 
     Args:
         memory_dump_path: Full path to the memory dump file.
         plugin_name: Name of the plugin to run.
+        os_type: Optional 'windows', 'linux', or 'mac' (required for common plugins)
         kw_args: Optional dictionary of keyword arguments to pass to the plugin.
 
     Returns:
@@ -321,11 +322,16 @@ if __name__ == "__main__":
         port = int(os.environ.get("MCP_PORT", 8080))
         host = os.environ.get("MCP_HOST", "0.0.0.0")
         logger.info(f"Starting MCP server on {host}:{port}")
-
-        # Start the server
-        mcp.run(transport="sse")
+        
+        asyncio.run(
+        mcp.run_sse_async(
+            host=host,
+            port=port,
+            log_level="debug"
+        )
+    )     
     except KeyboardInterrupt:
         logger.info("Server stopped by user")
     except Exception as e:
         logger.exception(f"Error starting server: {str(e)}")
-        sys.exit(1)
+        sys.exit(1)     

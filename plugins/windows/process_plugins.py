@@ -19,16 +19,16 @@ class PsList(BasePlugin):
         return await self.volatility_runner(cmd_args)
 
 class PsTree(BasePlugin):
-    """Shows process tree"""
+    """Plugin for listing processes in a tree based on their parent process ID"""
     
     async def run(self, memory_dump_path: str, kw_args: Dict[str, Any] = None) -> str:
-        """Run the PsTree plugin with the given memory dump and optional keyword arguments."""
+        """Run the macOS PsTree plugin with the given memory dump and optional keyword arguments."""
         memory_dump_path = self.validate_memory_dump(memory_dump_path)
         if memory_dump_path.startswith("Error"):
             return memory_dump_path
             
         cmd_args = ["-f", memory_dump_path, "windows.pstree.PsTree"]
-        # Add any relevant args from kw_args if needed by PsTree
+        # Add any relevant args from kw_args
             
         return await self.volatility_runner(cmd_args)
 
