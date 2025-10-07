@@ -1,5 +1,6 @@
 mcp-server
 aiohttp
+aiofiles
 python-dotenv
 typing-extensions
 rich
