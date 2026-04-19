@@ -428,18 +428,20 @@ if __name__ == "__main__":
         sys.exit(1)
 
     try:
-        # Run the MCP server
-        port = int(os.environ.get("MCP_PORT", 8080))
-        host = os.environ.get("MCP_HOST", "0.0.0.0")
-        logger.info(f"Starting MCP server on {host}:{port}")
-        
-        asyncio.run(
-        mcp.run_sse_async(
-            host=host,
-            port=port,
-            log_level="debug"
-        )
-    )     
+        # Transport selection. mcpproxy spawns MCP servers via stdio
+        # (JSON-RPC over pipes) — that's the default. Set MCP_TRANSPORT=http
+        # to run standalone with SSE/Streamable-HTTP instead.
+        # NOTE: upstream only shipped the SSE path with the now-removed
+        # FastMCP.run_sse_async(); local patch to restore both transports.
+        transport = os.environ.get("MCP_TRANSPORT", "stdio").lower()
+        if transport in ("stdio", ""):
+            logger.info("Starting MCP server on stdio")
+            asyncio.run(mcp.run_stdio_async())
+        else:
+            port = int(os.environ.get("MCP_PORT", 8080))
+            host = os.environ.get("MCP_HOST", "0.0.0.0")
+            logger.info(f"Starting MCP server (HTTP) on {host}:{port}")
+            asyncio.run(mcp.run_http_async(host=host, port=port))
     except KeyboardInterrupt:
         logger.info("Server stopped by user")
     except Exception as e:
